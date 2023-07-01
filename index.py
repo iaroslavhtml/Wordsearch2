@@ -6,8 +6,8 @@
 import string
 import random
 
-width = 15
-height = 10
+width = 10
+height = 3
 
 #words =  ["DOG","NO","HI","CAT", "HAMSTER"]
 
@@ -96,13 +96,23 @@ class Solution(object):
 
     def place_word(self, word, grid):
         word = random.choice([word, word[::-1]])
-
-        direction = random.choice([
-            [1,0],  # horizontal
-            [0,1],  # vertical
-            [1,1],  # diagonal
-        ])
-
+        
+        choices = []
+        wordlen = len(word)
+        if wordlen <= width:
+            choices.append([1,0])   # horizontal
+            
+        if wordlen <= height:
+            choices.append([0,1])   # vertical
+            
+        if wordlen <= height and wordlen <= width:
+            choices.append([1,1])   # horizontal
+        
+        if len(choices) == 0:
+            raise Exception("The word is too big to place")
+    
+        direction = random.choice(choices)
+        
         print(f'Placing {word} in direction {direction}...')
         xstart = width if direction[0] == 0 else width - len(word) - 1
         ystart = height if direction[1] == 0 else height - len(word) - 1
