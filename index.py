@@ -8,6 +8,9 @@ import string
 import random
 
 DEBUG = False
+
+GRID_EMPTY_CHAR = u"\u00B7"
+
 DEFAULT_WIDTH = 10
 DEFAULT_HEIGHT = 10
 DEFAULT_MAY_REVERSE = True
@@ -24,14 +27,14 @@ class WordSearch(object):
 
     def make_grid(self):
         return [
-            ['.' for i in range(self.width)]
+            [GRID_EMPTY_CHAR for i in range(self.width)]
             for j in range(self.height)
         ]
 
     def randomize_grid(self, grid):
         for i in range(self.height):
             for j in range(self.width):
-                if grid[i][j] == '.':
+                if grid[i][j] == GRID_EMPTY_CHAR:
                     grid[i][j] = random.choice(string.ascii_uppercase)
 
     def exist(self, board, word, res_board=None, direction='default'):
@@ -139,7 +142,7 @@ class WordSearch(object):
             if DEBUG:
                 print(f'VERIFYING {word[c]} ({c}) in {x + direction[0]*c} / {y + direction[1]*c}')
 
-            if grid[y + direction[1]*c][x + direction[0]*c] != '.':
+            if grid[y + direction[1]*c][x + direction[0]*c] != GRID_EMPTY_CHAR:
                 return self.place_word(word, grid)
 
         for c in range(len(word)):
