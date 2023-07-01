@@ -7,8 +7,8 @@ import string
 import random
 import sys
 
-width = 7
-height = 7
+width = 30
+height = 30
 
 #words =  ["DOG","NO","HI","", "HAMSTER"]
 
@@ -20,6 +20,11 @@ class Solution(object):
             ['.' for i in range(width)]
             for j in range(height)
         ]
+    def randomize_grid(self, grid):
+        for i in range(height):
+            for j in range(width):
+                if grid[i][j] == '.':
+                    grid[i][j] = random.choice(string.ascii_uppercase)
 
     def exist(self, board, word, res_board=None, direction='default'):
         n = len(board)
@@ -155,6 +160,7 @@ if __name__ == '__main__':
             sys.exit(1)
 
     print('Source board:')
+    ws.randomize_grid(grid)
     ws.print_board(grid)
 
     for word in words:
