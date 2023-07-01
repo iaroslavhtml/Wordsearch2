@@ -10,9 +10,9 @@ import sys
 width = 30
 height = 30
 
-#words =  ["DOG","NO","HI","", "HAMSTER"]
-
-words = ["HAMSTER", "GOLDENN"]
+words =  []
+for i in range(4):
+    words.append(input("Enter a word: ").upper())
 
 class Solution(object):
     def make_grid(self, width=width, height=height):
