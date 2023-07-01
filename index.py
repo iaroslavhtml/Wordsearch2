@@ -1,28 +1,36 @@
 #!/usr/bin/env python3
 # vim:sw=4:ts=4:et:
 #
-# based on https://www.tutorialspoint.com/word-search-in-python
+# partially based on https://www.tutorialspoint.com/word-search-in-python
 
+import sys
 import string
 import random
-import sys
 
-width = 30
-height = 30
+DEBUG = False
+DEFAULT_WIDTH = 10
+DEFAULT_HEIGHT = 10
+DEFAULT_MAY_REVERSE = True
 
-words =  []
-for i in range(4):
-    words.append(input("Enter a word: ").upper())
+class WordSearch(object):
+    width = DEFAULT_WIDTH
+    height = DEFAULT_HEIGHT
+    may_reverse = DEFAULT_MAY_REVERSE
 
-class Solution(object):
-    def make_grid(self, width=width, height=height):
+    def __init__(self, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, may_reverse=DEFAULT_MAY_REVERSE):
+        self.width = width
+        self.height = height
+        self.may_reverse = may_reverse
+
+    def make_grid(self):
         return [
-            ['.' for i in range(width)]
-            for j in range(height)
+            ['.' for i in range(self.width)]
+            for j in range(self.height)
         ]
+
     def randomize_grid(self, grid):
-        for i in range(height):
-            for j in range(width):
+        for i in range(self.height):
+            for j in range(self.width):
                 if grid[i][j] == '.':
                     grid[i][j] = random.choice(string.ascii_uppercase)
 
@@ -37,7 +45,9 @@ class Solution(object):
         return False
 
     def find(self, board, word, row, col, i=0, direction='default', res_board=None):
-        #print(f'find called: word={word} row={row} col={col} i={i}')
+        if DEBUG:
+            print(f'find called: word={word} row={row} col={col} i={i}')
+
         if i == len(word):
             return True
 
@@ -101,17 +111,18 @@ class Solution(object):
         return(res)
 
     def place_word(self, word, grid):
-        word = random.choice([word, word[::-1]])
+        if self.may_reverse:
+            word = random.choice([word, word[::-1]])
 
         choices = []
         wordlen = len(word)
-        if wordlen <= width:
+        if wordlen <= self.width:
             choices.append([1,0])   # horizontal
 
-        if wordlen <= height:
+        if wordlen <= self.height:
             choices.append([0,1])   # vertical
 
-        if wordlen <= height and wordlen <= width:
+        if wordlen <= self.height and wordlen <= self.width:
             choices.append([1,1])   # horizontal
 
         if len(choices) == 0:
@@ -119,39 +130,54 @@ class Solution(object):
 
         direction = random.choice(choices)
 
-        #print(f'Placing {word} in direction {direction}...')
-        xstart = width if direction[0] == 0 else width - len(word)
-        ystart = height if direction[1] == 0 else height - len(word)
+        if DEBUG:
+            print(f'Placing {word} in direction {direction}...')
 
-        #print(f'xstart/ystart: {xstart}/{ystart}')
+        xstart = self.width if direction[0] == 0 else self.width - len(word)
+        ystart = self.height if direction[1] == 0 else self.height - len(word)
+
+        if DEBUG:
+            print(f'xstart/ystart: {xstart}/{ystart}')
 
         x = random.randrange(0, xstart) if xstart > 0 else 0
         y = random.randrange(0, ystart) if ystart > 0 else 0
 
-        #print([x, y])
-        #print(f'x/y: {x}/{y}')
+        if DEBUG:
+            print(f'x/y: {x}/{y}')
 
         for c in range(len(word)):
-            #print(f'VERIFYING {word[c]} ({c}) to {x + direction[0]*c} / {y + direction[1]*c}')
-            #self.print_board(grid)
+            if DEBUG:
+                print(f'VERIFYING {word[c]} ({c}) in {x + direction[0]*c} / {y + direction[1]*c}')
+
             if grid[y + direction[1]*c][x + direction[0]*c] != '.':
-                #raise Exception("There is alredy letter")
                 return self.place_word(word, grid)
 
         for c in range(len(word)):
-            #print(f'PLACING {word[c]} ({c}) to {x + direction[0]*c} / {y + direction[1]*c}')
+            if DEBUG:
+                print(f'PLACING {word[c]} ({c}) to {x + direction[0]*c} / {y + direction[1]*c}')
             grid[y + direction[1]*c][x + direction[0]*c] = word[c]
+
         return grid
 
 if __name__ == '__main__':
-    ws = Solution()
+    ws = WordSearch(width=10, height=10, may_reverse=False)
     grid = ws.make_grid()
 
-    print('Start board:')
-    ws.print_board(grid)
+    if DEBUG:
+        print('Start board:')
+        ws.print_board(grid)
+
+    print("Enter words (empty string to finish):")
+    words = []
+    while True:
+        word = input()
+        if word == '':
+            break
+        words.append(word.upper())
 
     for word in words:
-        print(f"Placing word {word}")
+        if DEBUG:
+            print(f"Placing word {word}")
         try:
             ws.place_word(word, grid)
         except RecursionError:
@@ -159,7 +185,7 @@ if __name__ == '__main__':
             ws.print_board(grid)
             sys.exit(1)
 
-    print('Source board:')
+    print('Generated board:')
     ws.randomize_grid(grid)
     ws.print_board(grid)
 
