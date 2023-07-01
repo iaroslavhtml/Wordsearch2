@@ -100,16 +100,6 @@ class WordSearch(object):
         for row in board:
             print(' '.join(row))
 
-    def empty_board_from(self, board):
-        res = []
-        num_rows = len(board)
-        num_cols = len(board[0])
-        for i in range(num_rows):
-            res.append([])
-            for j in range(num_cols):
-                res[i].append('.')
-        return(res)
-
     def place_word(self, word, grid):
         if self.may_reverse:
             word = random.choice([word, word[::-1]])
@@ -126,7 +116,7 @@ class WordSearch(object):
             choices.append([1,1])   # horizontal
 
         if len(choices) == 0:
-            raise Exception("The word is too big to place")
+            raise Exception(f'The word "{word}" is too long to place')
 
         direction = random.choice(choices)
 
@@ -189,14 +179,15 @@ if __name__ == '__main__':
     ws.randomize_grid(grid)
     ws.print_board(grid)
 
+    solved_board = ws.make_grid()
     for word in words:
-        empty_board = ws.empty_board_from(grid)
         rc = (
-            ws.exist(grid, word, res_board=empty_board, direction='horizontal') or
-            ws.exist(grid, word, res_board=empty_board, direction='vertical') or
-            ws.exist(grid, word, res_board=empty_board, direction='diagonal_cross1') or
-            ws.exist(grid, word, res_board=empty_board, direction='diagonal_cross2')
+            ws.exist(grid, word, res_board=solved_board, direction='horizontal') or
+            ws.exist(grid, word, res_board=solved_board, direction='vertical') or
+            ws.exist(grid, word, res_board=solved_board, direction='diagonal_cross1') or
+            ws.exist(grid, word, res_board=solved_board, direction='diagonal_cross2')
         )
         print(f'Searching for {word}: {rc}')
-        if rc:
-            ws.print_board(empty_board)
+
+    print('Solved board:')
+    ws.print_board(solved_board)
