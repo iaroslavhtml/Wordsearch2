@@ -35,7 +35,7 @@ class Solution(object):
                     if self.find(board, word, i, j, res_board=res_board, direction=direction):
                         return True
         return False
-    
+
     def find(self, board, word, row, col, i=0, direction='default', res_board=None):
         #print(f'find called: word={word} row={row} col={col} i={i}')
         if i == len(word):
@@ -45,7 +45,7 @@ class Solution(object):
             return False
 
         board[row][col] = '*'
-        
+
         if direction == 'default':
             res = (
                 self.find(board, word, row+1, col, i+1, res_board=res_board) or
@@ -53,32 +53,32 @@ class Solution(object):
                 self.find(board, word, row, col+1, i+1, res_board=res_board) or
                 self.find(board, word, row, col-1, i+1, res_board=res_board)
              )
-            
+
         elif direction == 'horizontal':
             res = (
                 self.find(board, word, row, col+1, i+1, res_board=res_board, direction=direction) or
-                self.find(board, word, row, col-1, i+1, res_board=res_board, direction=direction) 
+                self.find(board, word, row, col-1, i+1, res_board=res_board, direction=direction)
             )
-            
+
         elif direction == 'vertical':
             res = (
                 self.find(board, word, row+1, col, i+1, res_board=res_board, direction=direction) or
-                self.find(board, word, row-1, col, i+1, res_board=res_board, direction=direction) 
+                self.find(board, word, row-1, col, i+1, res_board=res_board, direction=direction)
             )
-            
-            
+
+
         elif direction == 'diagonal_cross1':
             res = (
                 self.find(board, word, row+1, col+1, i+1, res_board=res_board, direction=direction) or
-                self.find(board, word, row-1, col-1, i+1, res_board=res_board, direction=direction) 
+                self.find(board, word, row-1, col-1, i+1, res_board=res_board, direction=direction)
             )
-            
+
         elif direction == 'diagonal_cross2':
             res = (
                 self.find(board, word, row+1, col-1, i+1, res_board=res_board, direction=direction) or
-                self.find(board, word, row-1, col+1, i+1, res_board=res_board, direction=direction) 
+                self.find(board, word, row-1, col+1, i+1, res_board=res_board, direction=direction)
             )
-        
+
         board[row][col] = word[i]
 
         if res and res_board:
@@ -102,32 +102,32 @@ class Solution(object):
 
     def place_word(self, word, grid):
         word = random.choice([word, word[::-1]])
-        
+
         choices = []
         wordlen = len(word)
         if wordlen <= width:
             choices.append([1,0])   # horizontal
-            
+
         if wordlen <= height:
             choices.append([0,1])   # vertical
-            
+
         if wordlen <= height and wordlen <= width:
             choices.append([1,1])   # horizontal
-        
+
         if len(choices) == 0:
             raise Exception("The word is too big to place")
-    
+
         direction = random.choice(choices)
-        
+
         #print(f'Placing {word} in direction {direction}...')
-        xstart = width if direction[0] == 0 else width - len(word) 
-        ystart = height if direction[1] == 0 else height - len(word) 
+        xstart = width if direction[0] == 0 else width - len(word)
+        ystart = height if direction[1] == 0 else height - len(word)
 
         #print(f'xstart/ystart: {xstart}/{ystart}')
 
         x = random.randrange(0, xstart) if xstart > 0 else 0
         y = random.randrange(0, ystart) if ystart > 0 else 0
-        
+
         #print([x, y])
         #print(f'x/y: {x}/{y}')
 
