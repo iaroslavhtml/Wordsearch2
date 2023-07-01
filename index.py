@@ -5,13 +5,14 @@
 
 import string
 import random
+import sys
 
 width = 7
 height = 7
 
-#words =  ["DOG","NO","HI","CAT", "HAMSTER"]
+#words =  ["DOG","NO","HI","", "HAMSTER"]
 
-words = ["HAMSTER"]
+words = ["HAMSTER", "GOLDENN"]
 
 class Solution(object):
     def make_grid(self, width=width, height=height):
@@ -113,20 +114,27 @@ class Solution(object):
     
         direction = random.choice(choices)
         
-        print(f'Placing {word} in direction {direction}...')
+        #print(f'Placing {word} in direction {direction}...')
         xstart = width if direction[0] == 0 else width - len(word) 
         ystart = height if direction[1] == 0 else height - len(word) 
 
-        print(f'xstart/ystart: {xstart}/{ystart}')
+        #print(f'xstart/ystart: {xstart}/{ystart}')
 
         x = random.randrange(0, xstart) if xstart > 0 else 0
         y = random.randrange(0, ystart) if ystart > 0 else 0
         
         #print([x, y])
-        print(f'x/y: {x}/{y}')
+        #print(f'x/y: {x}/{y}')
 
         for c in range(len(word)):
-            print(f'PLACING {word[c]} ({c}) to {x + direction[0]*c} / {y + direction[1]*c}')
+            #print(f'VERIFYING {word[c]} ({c}) to {x + direction[0]*c} / {y + direction[1]*c}')
+            #self.print_board(grid)
+            if grid[y + direction[1]*c][x + direction[0]*c] != '.':
+                #raise Exception("There is alredy letter")
+                return self.place_word(word, grid)
+
+        for c in range(len(word)):
+            #print(f'PLACING {word[c]} ({c}) to {x + direction[0]*c} / {y + direction[1]*c}')
             grid[y + direction[1]*c][x + direction[0]*c] = word[c]
         return grid
 
@@ -139,7 +147,12 @@ if __name__ == '__main__':
 
     for word in words:
         print(f"Placing word {word}")
-        ws.place_word(word, grid)
+        try:
+            ws.place_word(word, grid)
+        except RecursionError:
+            print(f"can not place word {word}")
+            ws.print_board(grid)
+            sys.exit(1)
 
     print('Source board:')
     ws.print_board(grid)
