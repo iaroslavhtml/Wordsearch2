@@ -3,15 +3,23 @@
 #
 # based on https://www.tutorialspoint.com/word-search-in-python
 
-import string 
-import random 
+import string
+import random
 
-width = 10
-height = 10 
+width = 15
+height = 10
 
-words =  ["DOG","NO","HI","CAT", "HAMSTER"]
+#words =  ["DOG","NO","HI","CAT", "HAMSTER"]
+
+words = ["HAMSTER"]
 
 class Solution(object):
+    def make_grid(self, width=width, height=height):
+        return [
+            ['.' for i in range(width)]
+            for j in range(height)
+        ]
+
     def exist(self, board, word, res_board=None, direction='default'):
         n = len(board)
         m = len(board[0])
@@ -85,30 +93,39 @@ class Solution(object):
             for j in range(num_cols):
                 res[i].append('.')
         return(res)
-    
+
     def place_word(self, word, grid):
         word = random.choice([word, word[::-1]])
-    
-        direction = random.choice([[1,0], [0,1], [1,1]])
+
+        direction = random.choice([
+            [1,0],  # horizontal
+            [0,1],  # vertical
+            [1,1],  # diagonal
+        ])
+
         print(f'Placing {word} in direction {direction}...')
         xstart = width if direction[0] == 0 else width - len(word) - 1
         ystart = height if direction[1] == 0 else height - len(word) - 1
 
+        print(f'xstart/ystart: {xstart}/{ystart}')
+
         x = random.randrange(0, xstart)
         y = random.randrange(0, ystart)
 
-        print([x, y])
+        #print([x, y])
+        print(f'x/y: {x}/{y}')
 
         for c in range(len(word)):
-            grid[x + direction[0]*c][y + direction[1]*c] = word[c]
+            print(f'PLACING {word[c]} ({c}) to {x + direction[0]*c} / {y + direction[1]*c}')
+            grid[y + direction[1]*c][x + direction[0]*c] = word[c]
         return grid
 
 if __name__ == '__main__':
     ws = Solution()
-    
-    grid = [[random.choice(string.ascii_uppercase) for i in range(width)] 
-        for j in range(height)]
-    
+    grid = ws.make_grid()
+
+    print('Start board:')
+    ws.print_board(grid)
 
     for word in words:
         print(f"Placing word {word}")
@@ -119,14 +136,12 @@ if __name__ == '__main__':
 
     for word in words:
         empty_board = ws.empty_board_from(grid)
-        rc = ( 
+        rc = (
             ws.exist(grid, word, res_board=empty_board, direction='horizontal') or
             ws.exist(grid, word, res_board=empty_board, direction='vertical') or
             ws.exist(grid, word, res_board=empty_board, direction='diagonal_cross1') or
-            ws.exist(grid, word, res_board=empty_board, direction='diagonal_cross2') 
-            
+            ws.exist(grid, word, res_board=empty_board, direction='diagonal_cross2')
         )
         print(f'Searching for {word}: {rc}')
         if rc:
             ws.print_board(empty_board)
-            
