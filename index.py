@@ -6,8 +6,8 @@
 import string
 import random
 
-width = 10
-height = 3
+width = 7
+height = 7
 
 #words =  ["DOG","NO","HI","CAT", "HAMSTER"]
 
@@ -114,14 +114,14 @@ class Solution(object):
         direction = random.choice(choices)
         
         print(f'Placing {word} in direction {direction}...')
-        xstart = width if direction[0] == 0 else width - len(word) - 1
-        ystart = height if direction[1] == 0 else height - len(word) - 1
+        xstart = width if direction[0] == 0 else width - len(word) 
+        ystart = height if direction[1] == 0 else height - len(word) 
 
         print(f'xstart/ystart: {xstart}/{ystart}')
 
-        x = random.randrange(0, xstart)
-        y = random.randrange(0, ystart)
-
+        x = random.randrange(0, xstart) if xstart > 0 else 0
+        y = random.randrange(0, ystart) if ystart > 0 else 0
+        
         #print([x, y])
         print(f'x/y: {x}/{y}')
 
